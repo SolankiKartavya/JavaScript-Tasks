@@ -34,3 +34,7 @@ A code repo for JavaScript tasks to learning
 # Task - Seven
 
 ![](gifs/Task7.gif)
+
+# Task - Eight
+
+![](gifs/Task8.gif)

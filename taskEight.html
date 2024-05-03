@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Task 8</title>
+</head>
+
+<body>
+    <center>
+        <form id="frm">
+            <label for="name">Name:</label>
+            <input type="text" name="name" id="name"><br><br>
+
+            <label for="email">Email:</label>
+            <input type="text" name="email" id="email"><br><br>
+
+            <label for="img"
+                style="background-color: black; border-radius: 0.5rem; color: aliceblue; font-size: 20px;">Upload
+                Profile Picture</label>
+            <br><input type="file" accept="image/png" id="img"><br><br>
+
+
+            <input type="submit" value="Submit" onclick="run(); return false">
+            <input type="submit" value="Delete All Data" onclick="clsAll(); return false">
+        </form><br><br><br><br>
+
+        <table border="1" id="tb">
+            <thead>
+                <th>Sr No</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Profile Photo</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+        </table>
+    </center>
+
+    <script>
+        var selectedTr = null;
+        var srno = localStorage.getItem('srno') ? parseInt(localStorage.getItem('srno')) : 1;
+
+        function run() {
+            var name = document.getElementById('name').value;
+            var email = document.getElementById('email').value;
+            var fileInput = document.getElementById('img').files[0];
+
+            if (selectedTr) {
+                selectedTr.cells[1].textContent = name;
+                selectedTr.cells[2].textContent = email;
+                if (fileInput) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        var imageSrc = e.target.result;
+                        selectedTr.cells[3].innerHTML = `<img style="max-width: 100px; max-height: 100px;" src="${imageSrc}" >`;
+                    };
+                    reader.readAsDataURL(fileInput);
+                }
+                document.getElementById('frm').reset();
+
+                // Save data to localStorage after editing
+                saveDataToStorage();
+
+                // Reset selectedTr after editing
+                selectedTr = null;
+            } else {
+                if (fileInput) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        var imageSrc = e.target.result;
+                        var tbl = document.getElementById('tableBody');
+                        var row = tbl.insertRow();
+                        var cel1 = row.insertCell();
+                        var cel2 = row.insertCell();
+                        var cel3 = row.insertCell();
+                        var cel4 = row.insertCell();
+                        var cel5 = row.insertCell();
+                        var cel6 = row.insertCell();
+
+                        cel1.innerHTML = srno++;
+                        cel2.innerHTML = name;
+                        cel3.innerHTML = email;
+                        cel4.innerHTML = '<img src="' + imageSrc + '" style="max-width: 100px; max-height: 100px;"><input type="hidden" value="' + imageSrc + '">';
+                        cel5.innerHTML = '<button onclick="editData(this)">Edit</button>'
+                        cel6.innerHTML = '<button onclick="deleteData(this)">Delete</button>';
+
+                        // Save data to localStorage after adding
+                        saveDataToStorage();
+                    };
+                    reader.readAsDataURL(fileInput);
+                } else {
+                    alert("Please select an image.");
+                }
+                document.getElementById('frm').reset();
+            }
+        }
+
+        function deleteData(button) {
+            let row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+            // Save data to localStorage after deletion
+            saveDataToStorage();
+        }
+
+        function editData(button) {
+            selectedTr = button.parentNode.parentNode;
+            document.getElementById('name').value = selectedTr.cells[1].textContent;
+            document.getElementById('email').value = selectedTr.cells[2].textContent;
+        }
+
+        //save data to localStorage
+        function saveDataToStorage() {
+            var tableData = [];
+            var tableRows = document.querySelectorAll('#tableBody tr');
+
+            tableRows.forEach(function (row) {
+                var rowData = {
+                    srNo: row.cells[0].textContent,
+                    name: row.cells[1].textContent,
+                    email: row.cells[2].textContent,
+                    profilePhoto: row.cells[3].querySelector('img').getAttribute('src')
+                };
+                tableData.push(rowData);
+            });
+
+            localStorage.setItem('tableData', JSON.stringify(tableData));
+            localStorage.setItem('srno', srno);
+        }
+
+        // Function to load data from localStorage
+        function loadDataFromStorage() {
+            var tableData = JSON.parse(localStorage.getItem('tableData'));
+
+            if (tableData) {
+                var tbl = document.getElementById('tableBody');
+                tableData.forEach(function (data) {
+                    var row = tbl.insertRow();
+                    var cel1 = row.insertCell();
+                    var cel2 = row.insertCell();
+                    var cel3 = row.insertCell();
+                    var cel4 = row.insertCell();
+                    var cel5 = row.insertCell();
+                    var cel6 = row.insertCell();
+
+                    cel1.innerHTML = data.srNo;
+                    cel2.innerHTML = data.name;
+                    cel3.innerHTML = data.email;
+                    cel4.innerHTML = `<img style="max-width: 100px; max-height: 100px;" src="${data.profilePhoto}" >`;
+                    cel5.innerHTML = '<button onclick="editData(this)">Edit</button>'
+                    cel6.innerHTML = '<button onclick="deleteData(this)">Delete</button>';
+
+                    srno = parseInt(data.srNo) + 1; // Update srno to the next available number
+                });
+            }
+        }
+        function clsAll() {
+            document.getElementById('tableBody').innerHTML = '';
+
+            localStorage.removeItem('tableData');
+            localStorage.removeItem('srno');
+
+            srno = 1;
+        }
+
+
+        // Load data from localStorage when the page loads
+        window.onload = function () {
+            loadDataFromStorage();
+        };
+
+    </script>
+</body>
+
+</html>
