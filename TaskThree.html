@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Task 3</title>
+</head>
+<body>
+    <center>
+        <form id="frm">
+            <label for="name">Name:</label>
+            <input type="text" name="name" id="name"><br><br>
+
+            <label for="email">Email:</label>
+            <input type="text" name="email" id="email"><br><br>
+
+            <label for="img" style="background-color: black; border-radius: 0.5rem; color: aliceblue; font-size: 20px;">Upload Profile Picture</label>
+            <input type="file" accept="image/png" id="img" style="display: none; "><br><br>
+
+            <input type="button" value="Submit" onclick="add()">
+        </form><br><br><br><br>
+
+        <table border="1" id="tb">
+            <thead>
+                <th>Sr No</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Profile Photo</th>
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+        </table>
+    </center>
+
+<script>
+    var srno = 1;
+
+    function add() {
+        var name = document.getElementById('name').value;
+        var email = document.getElementById('email').value;
+        var fileInput = document.getElementById('img');
+        var image = fileInput.files[0];
+
+        if (!name || !email || !image) {
+            alert("Please fill in all fields.");
+            return;
+        }
+
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var imageSrc = e.target.result;
+
+                var tbl = document.getElementById('tableBody');
+
+                var row = tbl.insertRow();
+                var cel1 = row.insertCell();
+                var cel2 = row.insertCell();
+                var cel3 = row.insertCell();
+                var cel4 = row.insertCell();
+
+                cel1.innerHTML = srno++;
+                cel2.innerHTML = name;
+                cel3.innerHTML = email;
+                cel4.innerHTML = '<img src="' + imageSrc + '" style="max-width: 100px; max-height: 100px;">';
+        };
+
+        reader.readAsDataURL(image);
+        document.getElementById('frm').reset();
+    }
+</script>
+</body>
+</html>

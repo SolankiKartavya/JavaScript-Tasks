@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TO DO</title>
+    <style>
+        .todo-list {
+            margin-top: 20px;
+        }
+
+        .todo-cart {
+            border: 1px #0d0d0d solid;
+            background-color: #fff;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <center>
+        <h1>My To Do List !</h1>
+        <form id="todo-form" onsubmit="toDo(); return false">
+            <label for="todo-date">Date:</label>
+            <input type="date" id="todo-date" required><br><br>
+            <label for="todo-text">Todo:</label>
+            <input type="text" id="todo-text" required><br><br>
+            <input type="submit" value="Add" >
+        </form>
+        <div id="todo-list">
+        </div>
+    </center>
+</body>
+<script>
+    const todoForm = document.getElementById('todo-form');
+    const todoList = document.getElementById('todo-list');
+
+    let todos = [];
+
+    function toDo(){
+        const toDate = document.getElementById('todo-date').value;
+        const toText = document.getElementById('todo-text').value;
+
+        const todo = {
+            date: toDate,
+            text: toText
+        };
+
+        todos.push(todo); // Add todo to the array
+
+        todos.sort((a, b) => {
+            return new Date(a.date) - new Date(b.date);
+        });
+
+        todoList.innerHTML = '';//if i dont use this the cart will display 2 times
+
+        todos.forEach(todo => {
+            const todoCard = document.createElement('div');
+            todoCard.classList.add('todo-cart');
+            todoCard.innerHTML = `
+                <strong>Date:</strong> ${todo.date} <br>
+                <strong>Todo:</strong> ${todo.text}
+            `;
+            todoList.appendChild(todoCard);
+        });
+
+
+    document.getElementById('todo-date').value = '';
+    document.getElementById('todo-text').value = '';
+}
+
+            
+</script>
+</html>
