@@ -8,51 +8,51 @@
 </head>
 <body>
 
-    <body>
+    <h1>Product Cards</h1>
+    <div class="container" id="product-container"></div>
+    
+    <script>
+        function fetchProducts() {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'https://dummyjson.com/products', true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    displayProducts(response.products);
+                }
+            };
+            xhr.send();
+        }
+    
+        function createCard(product) {
+            var randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
 
-        <h1>Product Cards</h1>
-        <div class="container" id="product-container"></div>
-        
-        <script>
-            function fetchProducts() {
-                var xhr = new XMLHttpRequest();
-                xhr.open('GET', 'https://dummyjson.com/products', true);
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState === 4 && xhr.status === 200) {
-                        var response = JSON.parse(xhr.responseText);
-                        displayProducts(response.products);
-                    }
-                };
-                xhr.send();
-            }
-        
-            function createCard(product) {
-                var imagesHTML = product.images.map(function(image) {
-                    return '<img src="' + image + '" alt="Product Image">';
-                }).join('');
-        
-                return `
-                    <div class="card">
-                        <div class="carousel">
-                            ${imagesHTML}
-                        </div>
-                        <div class="card-body">
-                            <h2 class="card-title">${product.title}</h2>
-                            <p class="card-price">$${product.price}</p>
-                            <p class="card-description">${product.description}</p>
-                            <a href="#" class="card-button">Buy Now</a>
-                        </div>
+            var imagesHTML = product.images.map(function(image) {
+                return '<img src="' + image + '" alt="Product Image">';
+            }).join('');
+    
+            return `
+                <div class="card" style="background-color: ${randomColor};">
+                    <div class="carousel">
+                        ${imagesHTML}
                     </div>
-                `;
-            }
-        
-            function displayProducts(products) {
-                var productContainer = document.getElementById('product-container');
-                productContainer.innerHTML = products.map(createCard).join('');
-            }
-        
-            fetchProducts();
-        </script>
-        
-        </body>
+                    <div class="card-body">
+                        <h2 class="card-title">${product.title}</h2>
+                        <p class="card-price">$${product.price}</p>
+                        <p class="card-description">${product.description}</p>
+                        <a href="#" class="card-button">Buy Now</a>
+                    </div>
+                </div>
+            `;
+        }
+    
+        function displayProducts(products) {
+            var productContainer = document.getElementById('product-container');
+            productContainer.innerHTML = products.map(createCard).join('');
+        }
+    
+        fetchProducts();
+    </script>
+    
+</body>
 </html>
