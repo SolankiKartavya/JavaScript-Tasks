@@ -1,58 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Cards</title>
     <link rel="stylesheet" href="task09.css">
 </head>
+
 <body>
 
     <h1>Product Cards</h1>
     <div class="container" id="product-container"></div>
-    
-    <script>
-        function fetchProducts() {
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'https://dummyjson.com/products', true);
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    var response = JSON.parse(xhr.responseText);
-                    displayProducts(response.products);
-                }
-            };
-            xhr.send();
-        }
-    
-        function createCard(product) {
-            var randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
 
-            var imagesHTML = product.images.map(function(image) {
-                return '<img src="' + image + '" alt="Product Image">';
-            }).join('');
-    
-            return `
-                <div class="card" style="background-color: ${randomColor};">
-                    <div class="carousel">
-                        ${imagesHTML}
-                    </div>
-                    <div class="card-body">
-                        <h2 class="card-title">${product.title}</h2>
-                        <p class="card-price">$${product.price}</p>
-                        <p class="card-description">${product.description}</p>
-                        <a href="#" class="card-button">Buy Now</a>
-                    </div>
-                </div>
-            `;
+    <script>
+
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('https://dummyjson.com/products')
+                .then(response => response.json())
+                .then(data => {
+                    const products = data.products;
+                    const container = document.getElementById('product-container');
+
+                    products.forEach(product => {
+                        const card = createProductCard(product);
+                        container.appendChild(card);
+                    });
+                })
+                .catch(error => console.error('Error fetching product data:', error));
+        });
+
+        function createProductCard(product) {
+
+            var randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
+            //card container
+            const card = document.createElement('div');
+            card.classList.add('card');
+            card.style.backgroundColor = randomColor;
+
+            // Create and append carousel
+            const carousel = document.createElement('div');
+            carousel.classList.add('carousel');
+            const img = document.createElement('img');
+            img.src = product.images[0];
+            carousel.appendChild(img);
+            card.appendChild(carousel);
+
+            // Create and append card body
+            const cardBody = document.createElement('div');
+            cardBody.classList.add('card-body');
+
+            const cardTitle = document.createElement('h2');
+            cardTitle.classList.add('card-title');
+            cardTitle.textContent = product.title;
+
+            const cardPrice = document.createElement('p');
+            cardPrice.classList.add('card-price');
+            cardPrice.textContent = `$${product.price}`;
+
+            const cardDescription = document.createElement('p');
+            cardDescription.classList.add('card-description');
+            cardDescription.textContent = product.description;
+
+            const cardButton = document.createElement('a');
+            cardButton.classList.add('card-button');
+            cardButton.href = '#';
+            cardButton.textContent = 'Add to Cart';
+
+            cardBody.appendChild(cardTitle);
+            cardBody.appendChild(cardPrice);
+            cardBody.appendChild(cardDescription);
+            cardBody.appendChild(cardButton);
+
+            card.appendChild(cardBody);
+
+            return card;
         }
-    
-        function displayProducts(products) {
-            var productContainer = document.getElementById('product-container');
-            productContainer.innerHTML = products.map(createCard).join('');
-        }
-    
-        fetchProducts();
+
     </script>
-    
+
 </body>
+
 </html>
